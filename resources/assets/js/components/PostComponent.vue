@@ -20,8 +20,7 @@
         <textarea rows="20" class="form-control mb-2" 
           v-model="post.content" />
           <div class="text-right">
-            <button class="btn btn-warning" v-if="!post.isNew">Edit</button>
-            <button class="btn btn-warning" @click="savePost()" v-if="post.isNew">Add</button>
+            <button class="btn btn-warning" @click="savePost()" >Ok</button>
             <button class="btn btn-danger" @click="cancel()">Cancelar</button>
           </div>
       </form>
@@ -50,7 +49,10 @@ export default {
     }
   },
   methods:{
-    toggleEdit() {      
+    toggleEdit() {
+      if (!this.editMode){
+        this.postBeforeEdit = {...this.post};
+      }
       this.editMode = !this.editMode;
     },
     savePost(){
@@ -60,14 +62,14 @@ export default {
         return;
       }
       if(this.post.isNew) {
-        axios.post('/posts', this.post)
+        axios.post('/api/posts', this.post)
         .then((res) =>{
           this.post.isNew = false;
           this.post.editMode = false;
           this.$emit('reload')
         });
       } else {
-        axios.put(`/posts/${this.post.id}`, this.post)
+        axios.put(`/api/posts/${this.post._id}`, this.post)
         .then(res=>{
           this.toggleEdit();
         });
@@ -79,11 +81,12 @@ export default {
         this.$emit('reload');
       }else{
         this.toggleEdit();
+        Object.assign(this.post, this.postBeforeEdit);
       }
     },
     deletePost() {
       if(confirm(`Delete post: ${this.post.title}`)){
-        axios.delete(`/posts/${this.post.id}`)
+        axios.delete(`/api/posts/${this.post._id}`)
           .then(()=>{
             this.$emit('reload')
           })

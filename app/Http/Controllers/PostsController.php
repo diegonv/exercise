@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Posts;
+use Auth;
 
 class PostsController extends Controller
 {
@@ -14,11 +15,7 @@ class PostsController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            return Posts::all();
-        } else {
-            return view('home');
-        }
+        return Posts::all();
     }
 
     /**
@@ -37,17 +34,6 @@ class PostsController extends Controller
         $post->save();
 
         return $post;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

@@ -1,7 +1,7 @@
 <template>
   <div>     
     <post v-for="post in posts"
-      :key="post.id"
+      :key="post._id"
       :post="post"
       :editable="false"
        />
@@ -16,7 +16,7 @@ export default {
     }
   },
   created(){
-    axios.get('/posts').then(res=>{
+    axios.get('/api/posts').then(res=>{
       this.posts = res.data;
     })
   },

@@ -2,9 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
-class Posts extends Model
+class Posts extends Eloquent
 {
-    //
+    protected $collection = 'posts';
+    protected $connection = 'mongodb';
 }

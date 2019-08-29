@@ -25,7 +25,7 @@ export default {
     }
   },
   created(){
-    axios.get('/posts').then(res=>{
+    axios.get('/api/posts').then(res=>{
       this.posts = res.data;
     })
   }
