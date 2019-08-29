@@ -39,7 +39,7 @@
 export default {
   props: {
     post: Object,
-    editable: Boolean
+    editable: Boolean,
   },
   data() {
     return {

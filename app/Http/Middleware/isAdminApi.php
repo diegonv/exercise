@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Middleware;
+
+use Auth;
 use Closure;
 
-class IsAdmin
+class isAdminApi
 {
     /**
      * Handle an incoming request.
@@ -13,11 +15,10 @@ class IsAdmin
      * @return mixed
      */
     public function handle($request, Closure $next)
-    {         
-        if(auth()->user()->isAdmin()) {
+    {
+        if(Auth::guard('api')->user()->isAdmin()){
             return $next($request);
         }
-        flash('You don\'t have admin access')->warning();
-        return redirect('home');        
+        return response()->json(['error' => 'Forbidden'], 403);
     }
 }

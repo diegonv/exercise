@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Posts;
 use Auth;
+use Illuminate\Support\Facades\Validator;
 
 class PostsController extends Controller
 {
@@ -26,13 +27,23 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:80',
+            'subtitle' => 'required|string|max:80',
+            'content' => 'required|string|max:255'
+        ]);
+    
+        if ($validator->fails())
+        {
+            return response()->json(['error' => $validator->errors()->all()], 400);
+        }
+
         $post = new Posts();
         $post->title = $request->title;
         $post->subtitle = $request->subtitle;
         $post->content = $request->content;
-        $post->user_id = auth()->id();
+        $post->user_id = auth()->guard('api')->user()->id;
         $post->save();
-
         return $post;
     }
 
@@ -45,7 +56,22 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:80',
+            'subtitle' => 'required|string|max:80',
+            'content' => 'required|string|max:255'
+        ]);
+    
+        if ($validator->fails())
+        {
+            return response(['errors'=>$validator->errors()->all()], 422);
+        }
+
         $post = Posts::find($id);
+        if (!$post) {
+            return response()->json(['error' => "Not Found"], 404);
+        }   
+
         $post->title = $request->title;
         $post->subtitle = $request->subtitle;
         $post->content = $request->content;
@@ -65,6 +91,6 @@ class PostsController extends Controller
         if ($post) {
             return response()->json(null, 204);
         }   
-        return response()->json(null, 404);
+        return response()->json(['error' => "Not Found"], 404);
     }
 }

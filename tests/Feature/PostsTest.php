@@ -7,13 +7,15 @@ use Tests\TestCase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 use Faker\Factory;
 use App\Posts;
 
 class PostsTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseMigrations;
+    //use RefreshDatabase;
     protected $faker;
     
     
@@ -27,6 +29,17 @@ class PostsTest extends TestCase
         ]);
 
         $this->be($user);
+    }
+
+    public function test_can_create_post() {
+        $data = [
+            'title' => $this->faker->sentence,
+            'subtitle' => $this->faker->sentence,
+            'content' => $this->faker->paragraph,
+        ];
+        $this->post(route('posts.store'), $data)
+            ->assertStatus(201)
+            ->assertJson($data);
     }
 
     /**

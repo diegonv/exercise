@@ -40,5 +40,5 @@ Route::post('register', [
 Route::get('/home', 'HomeController@index')->middleware("auth")->name('home');
 
 Route::get('/admin', 'AdminController@admin')
-    ->middleware('is_admin')
+    ->middleware('auth','is_admin')
     ->name('admin');
