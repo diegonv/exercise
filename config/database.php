@@ -78,6 +78,18 @@ return [
             'prefix' => '',
         ],
 
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'host' => env('DB_HOST_MONGO', 'localhost'),
+            'port' => env('DB_PORT_MONGO', 27017),
+            'database' => env('DB_DATABASE_MONGO'),
+            'username' => '',
+            'password' => '',
+            'options' => [
+                'database' => 'admin'
+            ]
+        ],
+
     ],
 
     /*

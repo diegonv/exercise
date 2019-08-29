@@ -39,7 +39,7 @@ Code coverage report
 
 I use larvel auth and this repo to test it https://github.com/DCzajkowski/auth-tests/tree/5.6.2
 
-I remove password reset from auth
+I removed password reset from auth
 
 With more time i ll change the auth service to laravel passport and vue.js in the frontend
 

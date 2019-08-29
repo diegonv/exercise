@@ -8,7 +8,7 @@
     </form>
     <hr> 
     <post v-for="post in posts"
-      :key="post.id"
+      :key="post._id"
       :post="post"
       :editable="true"
       v-on:reload="reload"
@@ -29,15 +29,17 @@ export default {
   },
   methods:{
     reload(){
-      axios.get('/posts').then(res=>{
+      axios.get('/api/posts').then(res=>{
       this.posts = res.data;
     })
     },
     newPost() {
-      this.posts.unshift({
-        editMode: true,
-        isNew: true,
-      });
+      if(!this.posts[0].isNew){
+        this.posts.unshift({
+          editMode: true,
+          isNew: true,
+        });
+      }
     }
   }
 }
