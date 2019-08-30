@@ -27,10 +27,11 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
+        
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:80',
             'subtitle' => 'required|string|max:80',
-            'content' => 'required|string|max:255'
+            'content' => 'required|string|max:1500'
         ]);
     
         if ($validator->fails())
@@ -64,7 +65,7 @@ class PostsController extends Controller
     
         if ($validator->fails())
         {
-            return response(['errors'=>$validator->errors()->all()], 422);
+            return response(['errors'=>$validator->errors()->all()], 400);
         }
 
         $post = Posts::find($id);

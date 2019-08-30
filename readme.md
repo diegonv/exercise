@@ -33,6 +33,8 @@ http://localhost:8081
 
 I prefer API first design that include made the API specs, Apib or openapi and then build 2 apps, 1 for the API and other for frontend, or even micro services.
 
+Test:
+phpunit
  
 Code coverage report
 /exercise/build/coverage-report/dashboard.html

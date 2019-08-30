@@ -11,39 +11,9 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function successfulLoginRoute()
-    {
-        return route('home');
-    }
-
-    protected function loginGetRoute()
-    {
-        return route('login');
-    }
-
-    protected function loginPostRoute()
-    {
-        return route('login');
-    }
-
-    protected function logoutRoute()
-    {
-        return route('logout');
-    }
-
-    protected function successfulLogoutRoute()
-    {
-        return '/';
-    }
-
-    protected function guestMiddlewareRoute()
-    {
-        return route('home');
-    }
-
     public function testUserCanViewALoginForm()
     {
-        $response = $this->get($this->loginGetRoute());
+        $response = $this->get(route('login'));
 
         $response->assertSuccessful();
         $response->assertViewIs('auth.login');
@@ -53,9 +23,9 @@ class LoginTest extends TestCase
     {
         $user = factory(User::class)->make();
 
-        $response = $this->actingAs($user)->get($this->loginGetRoute());
+        $response = $this->actingAs($user)->get(route('login'));
 
-        $response->assertRedirect($this->guestMiddlewareRoute());
+        $response->assertRedirect(route('home'));
     }
 
     public function testUserCanLoginWithCorrectCredentials()
@@ -64,12 +34,12 @@ class LoginTest extends TestCase
             'password' => bcrypt($password = 'secret'),
         ]);
 
-        $response = $this->post($this->loginPostRoute(), [
+        $response = $this->post(route('login'), [
             'email' => $user->email,
             'password' => $password,
         ]);
 
-        $response->assertRedirect($this->successfulLoginRoute());
+        $response->assertRedirect(route('home'));
         $this->assertAuthenticatedAs($user);
     }
 
@@ -80,13 +50,13 @@ class LoginTest extends TestCase
             'password' => bcrypt($password = 'secret'),
         ]);
 
-        $response = $this->post($this->loginPostRoute(), [
+        $response = $this->post(route('login'), [
             'email' => $user->email,
             'password' => $password,
             'remember' => 'on',
         ]);
 
-        $response->assertRedirect($this->successfulLoginRoute());
+        $response->assertRedirect(route('home'));
         $response->assertCookie(Auth::guard()->getRecallerName(), vsprintf('%s|%s|%s', [
             $user->id,
             $user->getRememberToken(),
@@ -101,12 +71,12 @@ class LoginTest extends TestCase
             'password' => bcrypt('secret'),
         ]);
 
-        $response = $this->from($this->loginGetRoute())->post($this->loginPostRoute(), [
+        $response = $this->from(route('login'))->post(route('login'), [
             'email' => $user->email,
             'password' => 'invalid-password',
         ]);
 
-        $response->assertRedirect($this->loginGetRoute());
+        $response->assertRedirect(route('login'));
         $response->assertSessionHasErrors('email');
         $this->assertTrue(session()->hasOldInput('email'));
         $this->assertFalse(session()->hasOldInput('password'));
@@ -115,12 +85,12 @@ class LoginTest extends TestCase
 
     public function testUserCannotLoginWithEmailThatDoesNotExist()
     {
-        $response = $this->from($this->loginGetRoute())->post($this->loginPostRoute(), [
+        $response = $this->from(route('login'))->post(route('login'), [
             'email' => 'nobody@example.com',
             'password' => 'invalid-password',
         ]);
 
-        $response->assertRedirect($this->loginGetRoute());
+        $response->assertRedirect(route('login'));
         $response->assertSessionHasErrors('email');
         $this->assertTrue(session()->hasOldInput('email'));
         $this->assertFalse(session()->hasOldInput('password'));
@@ -131,17 +101,17 @@ class LoginTest extends TestCase
     {
         $this->be(factory(User::class)->create());
 
-        $response = $this->post($this->logoutRoute());
+        $response = $this->post(route('logout'));
 
-        $response->assertRedirect($this->successfulLogoutRoute());
+        $response->assertRedirect('/');
         $this->assertGuest();
     }
 
     public function testUserCannotLogoutWhenNotAuthenticated()
     {
-        $response = $this->post($this->logoutRoute());
+        $response = $this->post(route('logout'));
 
-        $response->assertRedirect($this->successfulLogoutRoute());
+        $response->assertRedirect('/');
         $this->assertGuest();
     }
 
@@ -152,13 +122,13 @@ class LoginTest extends TestCase
         ]);
 
         foreach (range(0, 5) as $_) {
-            $response = $this->from($this->loginGetRoute())->post($this->loginPostRoute(), [
+            $response = $this->from(route('login'))->post(route('login'), [
                 'email' => $user->email,
                 'password' => 'invalid-password',
             ]);
         }
 
-        $response->assertRedirect($this->loginGetRoute());
+        $response->assertRedirect(route('login'));
         $response->assertSessionHasErrors('email');
         $this->assertContains(
             'Too many login attempts.',
